@@ -1,0 +1,17 @@
+https://stackoverflow.com/questions/31346797/dynamic-scheduler-interval-c-sharp
+https://github.com/fluentscheduler/FluentScheduler
+One of my favourite libraries is FluentScheduler. It simplifies scheduling tasks quite a bit for me. In your case I guess something like the following would work fine:
+
+public class MyRegistry : Registry
+{
+    public MyRegistry()
+    {
+        Schedule(() =>
+        {
+            // Do something
+        }).ToRunEvery(1).Weeks().On(DayOfWeek.Sunday).At(17, 0);
+    }
+} 
+You can get it on Nuget
+
+Install-Package FluentScheduler
