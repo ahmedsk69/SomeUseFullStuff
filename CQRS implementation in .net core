@@ -1,0 +1,132 @@
+Sure, here's an example of implementing CQRS in .NET Core using the MediatR library:
+
+Define your commands and queries:
+
+public class CreateUserCommand : IRequest<int>
+{
+    public string Name { get; set; }
+    public string Email { get; set; }
+}
+
+public class GetUserQuery : IRequest<User>
+{
+    public int Id { get; set; }
+}
+
+
+
+==========================
+
+Define your command and query handlers:
+
+public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, int>
+{
+    private readonly IRepository<User> _userRepository;
+
+    public CreateUserCommandHandler(IRepository<User> userRepository)
+    {
+        _userRepository = userRepository;
+    }
+
+    public async Task<int> Handle(CreateUserCommand command, CancellationToken cancellationToken)
+    {
+        var user = new User { Name = command.Name, Email = command.Email };
+        await _userRepository.AddAsync(user);
+        return user.Id;
+    }
+}
+
+public class GetUserQueryHandler : IRequestHandler<GetUserQuery, User>
+{
+    private readonly IRepository<User> _userRepository;
+
+    public GetUserQueryHandler(IRepository<User> userRepository)
+    {
+        _userRepository = userRepository;
+    }
+
+    public async Task<User> Handle(GetUserQuery query, CancellationToken cancellationToken)
+    {
+        return await _userRepository.GetByIdAsync(query.Id);
+    }
+}
+
+========================
+
+Use a mediator to handle the commands and queries:
+
+var services = new ServiceCollection();
+services.AddMediatR(typeof(Startup));
+var serviceProvider = services.BuildServiceProvider();
+
+var mediator = serviceProvider.GetService<IMediator>();
+var userId = await mediator.Send(new CreateUserCommand { Name = "John Doe", Email = "john.doe@example.com" });
+var user = await mediator.Send(new GetUserQuery { Id = userId });
+
+
+=====================
+
+Define your models and repositories:
+
+public class User
+{
+    public int Id { get; set; }
+    public string Name { get; set; }
+    public string Email { get; set; }
+}
+
+public interface IRepository<T> where T : class
+{
+    Task<T> GetByIdAsync(int id);
+    Task AddAsync(T entity);
+}
+
+
+===================
+
+Implement event sourcing:
+
+
+public class UserCreatedEvent : INotification
+{
+    public int UserId { get; set; }
+    public string Name { get; set; }
+    public string Email { get; set; }
+}
+
+public class UserEventHandler : INotificationHandler<UserCreatedEvent>
+{
+    private readonly IEventRepository _eventRepository;
+
+    public UserEventHandler(IEventRepository eventRepository)
+    {
+        _eventRepository = eventRepository;
+    }
+
+    public async Task Handle(UserCreatedEvent notification, CancellationToken cancellationToken)
+    {
+        var @event = new Event { Type = "UserCreated", Data = JsonSerializer.Serialize(notification) };
+        await _eventRepository.AddAsync(@event);
+    }
+}
+
+public interface IEventRepository
+{
+    Task AddAsync(Event @event);
+}
+
+public class Event
+{
+    public int Id { get; set; }
+    public string Type { get; set; }
+    public string Data { get; set; }
+}
+
+
+==================
+
+
+This example shows how to implement CQRS using MediatR, models, repositories, and event sourcing. However, keep in mind that CQRS can be implemented in many different ways depending on your application's requirements and architecture.
+
+
+
