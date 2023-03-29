@@ -1,0 +1,19 @@
+using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Running;
+
+public class MyBenchmark
+{
+    [Benchmark]
+    public void MyMethod()
+    {
+        // Your code here
+    }
+}
+
+public class Program
+{
+    public static void Main(string[] args)
+    {
+        var summary = BenchmarkRunner.Run<MyBenchmark>();
+    }
+}
