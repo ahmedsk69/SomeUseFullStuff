@@ -1,0 +1,6 @@
+using NodaTime;
+
+// Create a DateTime object representing the current time in the India time zone
+DateTimeZone indiaTimeZone = DateTimeZoneProviders.Tzdb["Asia/Kolkata"];
+ZonedDateTime indiaTime = SystemClock.Instance.InZone(indiaTimeZone);
+DateTime indiaDateTime = indiaTime.ToDateTimeUnspecified();
