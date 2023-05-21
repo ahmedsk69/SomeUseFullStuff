@@ -1,0 +1,27 @@
+
+
+builder.Services.Configure<AppSettings>(builder.Configuration);
+
+
+
+
+public class MyService
+{
+    private readonly AppSettings _appSettings;
+
+    public MyService(IOptions<AppSettings> appSettingsOptions)
+    {
+        _appSettings = appSettingsOptions.Value;
+    }
+
+    public void SomeMethod()
+    {
+        // Accessing the values
+        string url = _appSettings.Kestrel.Endpoints.Https.Url;
+        string defaultLogLevel = _appSettings.Logging.LogLevel.Default;
+        string connectionString = _appSettings.ConnectionStrings.value;
+        string imapPort = _appSettings.Smtp.ImapPort;
+        
+        // Do something with the values
+    }
+}
