@@ -1,0 +1,1 @@
+var mailHelper = this.Context?.HttpContext?.RequestServices.GetService<IMailHelper>();
