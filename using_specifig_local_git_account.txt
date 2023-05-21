@@ -1,0 +1,4 @@
+git config user.name
+git config user.email
+git config --local user.name "New User Name"
+git config --local user.email "newuser@example.com"
